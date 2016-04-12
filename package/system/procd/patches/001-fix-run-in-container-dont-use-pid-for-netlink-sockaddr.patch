@@ -1,0 +1,11 @@
+--- procd-2016-03-09/plug/hotplug.c.orig	2016-04-13 00:55:28.040305231 +0200
++++ procd-2016-03-09/plug/hotplug.c	2016-04-13 00:55:39.592082446 +0200
+@@ -574,7 +574,7 @@
+ 	rule_file = strdup(rules);
+ 	memset(&nls,0,sizeof(struct sockaddr_nl));
+ 	nls.nl_family = AF_NETLINK;
+-	nls.nl_pid = getpid();
++	nls.nl_pid = 0;
+ 	nls.nl_groups = -1;
+ 
+ 	if ((hotplug_fd.fd = socket(PF_NETLINK, SOCK_DGRAM | SOCK_CLOEXEC, NETLINK_KOBJECT_UEVENT)) == -1) {
