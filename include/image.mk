@@ -71,6 +71,7 @@ endif
 
 JFFS2_BLOCKSIZE ?= 64k 128k
 
+fs-types-$(CONFIG_TARGET_ROOTFS_SNAP) += snap
 fs-types-$(CONFIG_TARGET_ROOTFS_SQUASHFS) += squashfs
 fs-types-$(CONFIG_TARGET_ROOTFS_JFFS2) += $(addprefix jffs2-,$(JFFS2_BLOCKSIZE))
 fs-types-$(CONFIG_TARGET_ROOTFS_JFFS2_NAND) += $(addprefix jffs2-nand-,$(NAND_BLOCKSIZE))
@@ -266,6 +267,19 @@ define Image/mkfs/ext4
 		$(if $(SOURCE_DATE_EPOCH),-T $(SOURCE_DATE_EPOCH)) \
 		$(KDIR)/root.ext4 $(TARGET_DIR)/
 endef
+
+define Image/mkfs/snap
+	[ ! -d $(TARGET_DIR)/meta/ ] && mkdir $(TARGET_DIR)/meta/
+	echo "name: $(IMG_PREFIX)$(if $(PROFILE),-$(PROFILE))-rootfs" > $(TARGET_DIR)/meta/snap.yaml
+	echo "version: 1" >> $(TARGET_DIR)/meta/snap.yaml
+	echo "confinement: devmode" >> $(TARGET_DIR)/meta/snap.yaml
+	echo "apps:" >> $(TARGET_DIR)/meta/snap.yaml
+	echo "  openwrt-init:" >> $(TARGET_DIR)/meta/snap.yaml
+	echo "    command: openwrt-init" >> $(TARGET_DIR)/meta/snap.yaml
+	echo "    daemon: simple" >> $(TARGET_DIR)/meta/snap.yaml
+	cd $(BIN_DIR)/ && snapcraft snap $(TARGET_DIR)/
+endef
+
 
 define Image/mkfs/prepare/default
 	# Use symbolic permissions to avoid clobbering SUID/SGID/sticky bits

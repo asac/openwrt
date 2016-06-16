@@ -64,6 +64,12 @@ menu "Target Images"
 		help
 		  Build a compressed tar archive of the root filesystem.
 
+	config TARGET_ROOTFS_SNAP
+		bool "snap"
+		default y if USES_SNAP
+		help
+		  Build a snap archive of the root filesystem.
+
 	comment "Root filesystem images"
 
 	menuconfig TARGET_ROOTFS_EXT4FS
